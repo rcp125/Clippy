@@ -31,7 +31,7 @@ def listen(text):
         if check != text:
             text = check
             add(text)
-            print(text)
+            print("Text Copied...")
         time.sleep(0.5)
 
 @app.route('/')
@@ -42,8 +42,8 @@ def index():
     return render_template('index.html', items=items)
 
 def add(text):
-    for _ in db.session.execute("SELECT * FROM clipboard_item WHERE text LIKE '{}'".format(text)):
-        db.session.execute("DELETE FROM clipboard_item WHERE text LIKE '{}'".format(text))
+    for _ in db.session.execute("SELECT * FROM clipboard_item WHERE text =:text", {"text":text }):
+        db.session.execute("DELETE FROM clipboard_item WHERE text =:text", {"text":text })
         print("Updating Entry...")
         break
     else:
@@ -55,17 +55,28 @@ def add(text):
 
 @app.route('/deleteAll', methods=['POST'])
 def removeAll():
+    print("Deleting All Entries...")
     db.session.execute('DELETE FROM clipboard_item')
     db.session.commit()
     return redirect(url_for('index'))
 
 @app.route('/delete', methods=['POST'])
 def remove():
+    print("Deleting Entry...")
     text = request.form['entry_id']
-    db.session.execute("DELETE FROM clipboard_item where text LIKE '{}'".format(text))
+    db.session.execute("DELETE FROM clipboard_item where text =:text", {"text":text })
     db.session.commit()
     return redirect(url_for('index'))
 
+@app.route('/deleteSelected', methods=['POST'])
+def removeSelected():
+    if request.method == "POST":
+        if request.form.getlist("copy_id"):
+            print("Deleting Selected Entries...")
+            print(request.form.getlist("copy_id"))
+            ClipboardItem.query.filter(ClipboardItem.id.in_(request.form.getlist("copy_id"))).delete(synchronize_session=False)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 
 if __name__ == "__main__":

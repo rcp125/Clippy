@@ -43,6 +43,8 @@
                         </div>
 
                     </div>
+
+                    <form id="checked-form" method="POST" action="{{ url_for('removeSelected') }}">
                     
 
 
@@ -55,17 +57,23 @@
                                     <ul class=" list-group list-group-flush">
                                         {% for item in items %}
                                         <li class="list-group-item">
-                                            <div class="todo-indicator bg-warning"></div> <!-- BAR ON RIGHT -->
+                                            <div class="todo-indicator bg-warning"></div> <!-- BAR ON LEFT -->
                                             <div class="widget-content p-0">
                                                 <div class="widget-content-wrapper">
                                                     <div class="widget-content-left mr-2">
-                                                        <div class="custom-checkbox custom-control pl-1"> 
-                                                            <input value="{{item}}" type="checkbox">
+                                                        <!-- <form id="checked-form" method="POST" action="{{ url_for('removeSelected') }}"> -->
+                                                            <div class="custom-checkbox custom-control pl-1"> 
+                                                                <input name="copy_id" value="{{item.id}}" type="checkbox">
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                        <!-- </form> -->
+                                                        <!-- <div class="custom-checkbox custom-control pl-1"> 
+                                                            <input name="copy_id" value="{{item.id}}" type="checkbox">
                                                             <label>&nbsp;</label> 
-                                                        </div>
+                                                        </div> -->
                                                     </div>
                                                     <div class="widget-content-left">
-                                                        <div class="widget-heading">{{ item.text | truncate(100) }} 
+                                                        <div class="widget-heading">{{ item.text | truncate(50) }} 
                                                             <div class="badge badge-pill badge-info ml-2">New</div>
                                                         </div>
                                                         <div class="widget-subheading"><i>{{ item.date }}</i></div>
@@ -94,17 +102,48 @@
                             </div>
                         </perfect-scrollbar>
                     </div>
+
+                </form>
+
+                    
         
-                    <div class="d-block text-right card-footer">
+                    <!-- <div class="d-block text-right card-footer">   
                         <a href="{{ url_for('index') }}">
                             <button class="btn btn-primary">REFRESH</button>
                         </a>
                         <form class="reset-css" method="post" action="{{ url_for('removeAll') }}">
                             <button type="submit" class="btn btn-danger">CLEAR</button>
                         </form>
+                    </div> -->
+
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12 col-md-12 btn-row d-block card-footer">
+                                <!-- <a href="{{ url_for('removeSelected') }}">
+                                    <button class="btn btn-primary m-1">DELETE SELECTED</button>
+                                </a> -->
+                                <button type="submit" form="checked-form" class="btn btn-danger m-1">
+                                    DELETE SELECTED
+                                </button>
+                                <a href="{{ url_for('index') }}">
+                                    <button class="btn btn-primary float-right m-1">REFRESH</button>
+                                </a>
+                                <form class="reset-css" method="post" action="{{ url_for('removeAll') }}">
+                                    <button type="submit" class="btn btn-danger float-right m-1">CLEAR</button>
+                                </form>
+                                
+
+                            </div>
+
+                        </div>
+
                     </div>
+
+                    
                 </div> <!-- END SHADOW -->
             </div> <!-- END LEFT COMPONENT -->
+
+
 
             <div class="col-md-4">
                 <div class="card-hover-shadow-2x mb-3 card">
@@ -113,6 +152,26 @@
                             <i class="fa fa-tasks"></i>&nbsp;Item Details
                         </div>
                     </div>
+
+                    <div class="card-header-tab card-header pt-3">
+                        <div class="widget-content p-0">
+                            <!-- <div class="widget-content-wrapper">
+                                <div class="widget-content-left mr-2">
+                                    <div class="custom-checkbox custom-control pl-1"> 
+                                        <input value="{{item}}" type="checkbox">
+                                        <label>&nbsp;</label> 
+                                    </div>
+                                </div>
+
+                                <div class="widget-content-left">
+                                    <p>0 out of {{ items|length }} selected</p>
+                                </div>
+    
+                            </div> -->
+                        </div>
+
+                    </div>
+
                     <div class="scroll-area-sm">
                         <perfect-scrollbar class="ps-show-limits">
                             <div style="position: static;" class="ps ps--active-y">
@@ -155,7 +214,7 @@
                             <button class="btn btn-primary">REFRESH</button>
                         </a>
                         <form class="reset-css" method="post" action="{{ url_for('removeAll') }}">
-                            <button type="submit" class="btn btn-danger">CLEAR</button>
+                            <button type="submit" class="btn btn-danger">DELETE</button>
                         </form>
                     </div>
     
