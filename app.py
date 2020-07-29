@@ -37,8 +37,6 @@ def listen(text):
 @app.route('/')
 def index():
     items = ClipboardItem.query.all()
-    # threading.Thread(target=listen).start()
-
     return render_template('index.html', items=items)
 
 def add(text):
@@ -60,21 +58,22 @@ def removeAll():
     db.session.commit()
     return redirect(url_for('index'))
 
-@app.route('/delete', methods=['POST'])
-def remove():
-    print("Deleting Entry...")
-    text = request.form['entry_id']
-    db.session.execute("DELETE FROM clipboard_item where text =:text", {"text":text })
-    db.session.commit()
-    return redirect(url_for('index'))
-
-@app.route('/deleteSelected', methods=['POST'])
-def removeSelected():
+@app.route('/itemAction', methods=['POST'])
+def item_actions():
     if request.method == "POST":
-        if request.form.getlist("copy_id"):
+        # I. Delete Individual Item
+        if request.form.get('action') and request.form.get('action')[:10] == 'deleteitem':
+            print("Deleting Entry ID {} ...".format(request.form.get('action')[10:]))
+            db.session.execute("DELETE FROM clipboard_item where id =:id", {"id":int(request.form.get('action')[10:]) })
+
+        # II. Delete Selected Items
+        elif request.form.getlist("copy_id"):
             print("Deleting Selected Entries...")
             print(request.form.getlist("copy_id"))
             ClipboardItem.query.filter(ClipboardItem.id.in_(request.form.getlist("copy_id"))).delete(synchronize_session=False)
+    
+
+
     db.session.commit()
     return redirect(url_for('index'))
 
