@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <title>Clippy Clipboard Manager</title>
+</head>
+<body>
+    <div class="col-md-8">
+        <h1 class="display-4 text-light mt-2">Welcome to Clippy!</h1>
+        <p class="lead p-2 text-light">Web Based Clipboard Management Tool</p>
+    </div>
+   
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-8"> <!-- START LEFT COMPONENT -->
+                <div class="card-hover-shadow-2x mb-3 card">
+                    <div class="card-header-tab card-header">
+                        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                            <i class="fa fa-tasks"></i>&nbsp;Clipboard Items
+                        </div>
+                    </div>
+                    
+                    <div class="card-header-tab card-header pt-3">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-wrapper">
+                                <div class="widget-content-left mr-2">
+                                    <div class="custom-checkbox custom-control pl-1"> 
+                                        <input value="{{item}}" type="checkbox">
+                                        <label>&nbsp;</label> 
+                                    </div>
+                                </div>
+
+                                <div class="widget-content-left">
+                                    <p>0 out of {{ items|length }} selected</p>
+                                </div>
+    
+                            </div>
+                        </div>
+
+                    </div>
+                    
+
+
+                    
+
+                    <div class="scroll-area-sm">
+                        <perfect-scrollbar class="ps-show-limits">
+                            <div style="position: static;" class="ps ps--active-y">
+                                <div class="ps-content">
+                                    <ul class=" list-group list-group-flush">
+                                        {% for item in items %}
+                                        <li class="list-group-item">
+                                            <div class="todo-indicator bg-warning"></div> <!-- BAR ON RIGHT -->
+                                            <div class="widget-content p-0">
+                                                <div class="widget-content-wrapper">
+                                                    <div class="widget-content-left mr-2">
+                                                        <div class="custom-checkbox custom-control pl-1"> 
+                                                            <input value="{{item}}" type="checkbox">
+                                                            <label>&nbsp;</label> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="widget-content-left">
+                                                        <div class="widget-heading">{{ item.text | truncate(100) }} 
+                                                            <div class="badge badge-pill badge-info ml-2">New</div>
+                                                        </div>
+                                                        <div class="widget-subheading"><i>{{ item.date }}</i></div>
+                                                    </div>
+                                                    <div class="widget-content-right"> 
+                                                        <button class="border-0 btn-transition btn btn-outline-warning"> 
+                                                            <i class="fa fa-star"></i>
+                                                        </button>
+                                                        <button class="border-0 btn-transition btn btn-outline-primary"> 
+                                                            <i class="fa fa-paper-plane"></i>
+                                                        </button>
+                                                        <form class="reset-css" action="{{ url_for('remove') }}" method=post>
+                                                            <button class="border-0 btn-transition btn btn-outline-danger"> 
+                                                                <input type="hidden" name="entry_id" value="{{ item.text }}">
+                                                                <i class="fa fa-trash"></i> 
+                                                            </button>
+                                                        </form>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </perfect-scrollbar>
+                    </div>
+        
+                    <div class="d-block text-right card-footer">
+                        <a href="{{ url_for('index') }}">
+                            <button class="btn btn-primary">REFRESH</button>
+                        </a>
+                        <form class="reset-css" method="post" action="{{ url_for('removeAll') }}">
+                            <button type="submit" class="btn btn-danger">CLEAR</button>
+                        </form>
+                    </div>
+                </div> <!-- END SHADOW -->
+            </div> <!-- END LEFT COMPONENT -->
+
+            <div class="col-md-4">
+                <div class="card-hover-shadow-2x mb-3 card">
+                    <div class="card-header-tab card-header">
+                        <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                            <i class="fa fa-tasks"></i>&nbsp;Item Details
+                        </div>
+                    </div>
+                    <div class="scroll-area-sm">
+                        <perfect-scrollbar class="ps-show-limits">
+                            <div style="position: static;" class="ps ps--active-y">
+                                <div class="ps-content">
+                                    <ul class=" list-group list-group-flush">
+                                        {% for item in items %}
+                                        <li class="list-group-item">
+                                            <div class="todo-indicator bg-warning"></div>
+                                            <div class="widget-content p-0">
+                                                <div class="widget-content-wrapper">
+                                                    <div class="widget-content-left mr-2">
+                                                        <div class="custom-checkbox custom-control pl-1"> 
+                                                            <input value="{{item}}" type="checkbox">
+                                                            <label>&nbsp;</label> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="widget-content-left">
+                                                        <div class="widget-heading">{{ item.text }} 
+                                                            <div class="badge badge-danger ml-2">Rejected</div>
+                                                        </div>
+                                                        <div class="widget-subheading"><i>{{item.date }}</i></div>
+                                                    </div>
+                                                    <div class="widget-content-right"> 
+                                                        <button class="border-0 btn-transition btn btn-outline-success"> 
+                                                            <i class="fa fa-check"></i>
+                                                        </button> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </perfect-scrollbar>
+                    </div>
+        
+                    <div class="d-block text-right card-footer">
+                        <a href="{{ url_for('index') }}">
+                            <button class="btn btn-primary">REFRESH</button>
+                        </a>
+                        <form class="reset-css" method="post" action="{{ url_for('removeAll') }}">
+                            <button type="submit" class="btn btn-danger">CLEAR</button>
+                        </form>
+                    </div>
+    
+                
+    
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+    
+</body>
+</html>
