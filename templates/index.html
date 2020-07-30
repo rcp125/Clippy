@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../static/css/main.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <script src="../static/js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Clippy Clipboard Manager</title>
 </head>
 <body>
@@ -62,13 +63,11 @@
                                                                     <input name="copy_id" value="{{item.id}}" onchange="count_checked()" type="checkbox">
                                                                     <label>&nbsp;</label>
                                                                 </div>
-                                                            <!-- <div class="custom-checkbox custom-control pl-1"> 
-                                                                <input name="copy_id" value="{{item.id}}" type="checkbox">
-                                                                <label>&nbsp;</label> 
-                                                            </div> -->
                                                         </div>
+                                            
                                                         <div class="widget-content-left">
-                                                            <div class="widget-heading">{{ item.text | truncate(50) }} 
+                                                            <div class="widget-heading">
+                                                                <a onclick="populate_div('{{item.text}}')"> {{ item.text | truncate(50) }} </a>
                                                                 <div class="badge badge-pill badge-info ml-2">New</div>
                                                             </div>
                                                             <div class="widget-subheading"><i>{{ item.date }}</i></div>
@@ -111,12 +110,8 @@
                                 <form class="reset-css" method="post" action="{{ url_for('removeAll') }}">
                                     <button type="submit" class="btn btn-danger float-right m-1">CLEAR</button>
                                 </form>
-                                
-
                             </div>
-
                         </div>
-
                     </div>
 
                     
@@ -156,34 +151,11 @@
                         <perfect-scrollbar class="ps-show-limits">
                             <div style="position: static;" class="ps ps--active-y">
                                 <div class="ps-content">
-                                    <ul class=" list-group list-group-flush">
-                                        {% for item in items %}
-                                        <li class="list-group-item">
-                                            <div class="todo-indicator bg-warning"></div>
-                                            <div class="widget-content p-0">
-                                                <div class="widget-content-wrapper">
-                                                    <div class="widget-content-left mr-2">
-                                                        <div class="custom-checkbox custom-control pl-1"> 
-                                                            <input value="{{item}}" type="checkbox">
-                                                            <label>&nbsp;</label> 
-                                                        </div>
-                                                    </div>
-                                                    <div class="widget-content-left">
-                                                        <div class="widget-heading">{{ item.text }} 
-                                                            <div class="badge badge-danger ml-2">Rejected</div>
-                                                        </div>
-                                                        <div class="widget-subheading"><i>{{item.date }}</i></div>
-                                                    </div>
-                                                    <div class="widget-content-right"> 
-                                                        <button class="border-0 btn-transition btn btn-outline-success"> 
-                                                            <i class="fa fa-check"></i>
-                                                        </button> 
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
+                                    <div id="item_details">
+
+                                    </div>
+                                    
+                                    
                                 </div>
                             </div>
                         </perfect-scrollbar>

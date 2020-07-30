@@ -37,6 +37,7 @@ def listen(text):
 @app.route('/')
 def index():
     items = ClipboardItem.query.all()
+    print(items[27].text)
     return render_template('index.html', items=items)
 
 def add(text):

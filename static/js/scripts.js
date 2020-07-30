@@ -18,3 +18,17 @@ function check_all(source){
         document.getElementById("check-count").innerHTML = 0;
     }
 }
+
+function copy2clip(){
+    var text = document.getElementById("input");
+
+    text.select();
+    text.setSelectionRange(0, 99999);
+
+    document.execCommand("copy");
+}
+
+function populate_div(text){
+    alert(text);
+    document.getElementById("item_details").innerText = text;
+}
