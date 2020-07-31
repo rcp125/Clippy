@@ -2,15 +2,17 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from dataclasses import dataclass
 from flask_sqlalchemy import SQLAlchemy
 import pyperclip
+import psutil
 
 import time
 import json
 from datetime import datetime
 from multiprocessing import Process, Value
 from hashlib import sha256
+import signal
+import sys
 
 app = Flask(__name__)
-
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///clippy.db'
 
@@ -93,14 +95,30 @@ def item_actions():
             print(request.form.getlist("copy_id"))
             ClipboardItem.query.filter(ClipboardItem.id.in_(request.form.getlist("copy_id"))).delete(synchronize_session=False)
     
-
-
     db.session.commit()
     return redirect(url_for('index'))
 
 
+@app.route('/toggle')
+def toggle_listen():
+    if p.status() == "stopped":
+        print("Resuming Listen...")
+        p.resume()
+    else:
+        print("Pausing Listen...")
+        p.suspend()
+    return redirect(url_for('index'))
+
+def signal_handler(sig, frame):
+    print("Closing Application...")
+    if p and p.status() == "stopped":
+        p.resume()
+    sys.exit(0)
+
 if __name__ == "__main__":
     listener = Process(target=listen, args=(pyperclip.paste().strip(),))
     listener.start()
+    signal.signal(signal.SIGINT, signal_handler)
+    p = psutil.Process(listener.pid)
     app.run(debug=True, use_reloader=False)
     listener.join()
