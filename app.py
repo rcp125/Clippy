@@ -1,26 +1,34 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from dataclasses import dataclass
 from flask_sqlalchemy import SQLAlchemy
 import pyperclip
 
 import time
+import json
 from datetime import datetime
-# import threading
 from multiprocessing import Process, Value
 from hashlib import sha256
 
 app = Flask(__name__)
 
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///clippy.db'
 
 db = SQLAlchemy(app)
 
+@dataclass
 class ClipboardItem(db.Model):
+    id: int
+    text: str
+    length: int
+    location: str
+    date: str
+
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(9999), nullable=False)
     length = db.Column(db.Integer, nullable=False)
     location = db.Column(db.String(2083))
     date = db.Column(db.DateTime, nullable=False, default=datetime.now())
-
 
 def get_hash(text):
     return sha256(text.encode('utf-8')).hexdigest()
@@ -30,27 +38,39 @@ def listen(text):
         check = pyperclip.paste().strip()
         if check != text:
             text = check
+            print("Copying Text...")
             add(text)
-            print("Text Copied...")
         time.sleep(0.5)
 
 @app.route('/')
 def index():
     items = ClipboardItem.query.all()
-    print(items[27].text)
+    # json_items = jsonify(items)
+
     return render_template('index.html', items=items)
+    # json_data = jsonify(items)
+    # return jsonify(json_data.get_data(as_text=True))
+
+@app.route('/json')
+def post_json():
+    items = ClipboardItem.query.all()
+    return jsonify(items)
+
 
 def add(text):
     for _ in db.session.execute("SELECT * FROM clipboard_item WHERE text =:text", {"text":text }):
-        db.session.execute("DELETE FROM clipboard_item WHERE text =:text", {"text":text })
-        print("Updating Entry...")
+        # db.session.execute("DELETE FROM clipboard_item WHERE text =:text", {"text":text })
+        print("Action Blocked: Entry Exists...")
         break
     else:
         print('Inserting Entry...')
+        dummy = ClipboardItem(text=text, length=len(text), location="null", date=datetime.now())
+        db.session.add(dummy)
+        db.session.commit()
 
-    dummy = ClipboardItem(text=text, length=len(text), location="null", date=datetime.now())
-    db.session.add(dummy)
-    db.session.commit()
+    # dummy = ClipboardItem(text=text, length=len(text), location="null", date=datetime.now())
+    # db.session.add(dummy)
+    # db.session.commit()
 
 @app.route('/deleteAll', methods=['POST'])
 def removeAll():
