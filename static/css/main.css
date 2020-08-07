@@ -391,3 +391,19 @@ input:checked + .slider:before {
 input:checked + .slider:after {  
     content:'OFF';
 }
+
+.copy-text {
+    cursor: pointer;
+    transition: 0s 0.3s;
+}
+
+.copy-text:active {
+    background-color: #2ab934;
+    border-color: #2ab934;
+    transition: 0s;
+}
+
+#item_details {
+    white-space: pre;
+    overflow-x: auto;
+}

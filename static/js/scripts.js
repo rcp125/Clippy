@@ -1,3 +1,5 @@
+
+
 function count_checked(){
     baseElement = document.querySelector("#single-checks");
     document.getElementById("check-count").innerHTML = baseElement.querySelectorAll('input[type="Checkbox"]:checked').length;
@@ -46,3 +48,12 @@ function populate_div(index){
     });
 }
 
+// Download Copied Text
+function download() {
+    var text = document.getElementById("item_details").innerText;
+    var hidden = document.createElement('a');
+    hidden.href = 'data:attachment/text,' + encodeURI(text);
+    hidden.target = '_blank';
+    hidden.download = 'copied.txt';
+    hidden.click();
+}

@@ -32,6 +32,8 @@ class ClipboardItem(db.Model):
     location = db.Column(db.String(2083))
     date = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
+
+
 def get_hash(text):
     return sha256(text.encode('utf-8')).hexdigest()
 
@@ -47,6 +49,7 @@ def listen(text):
 @app.route('/')
 def index():
     items = ClipboardItem.query.all()
+    # items = ClipboardItem.query.order_by(ClipboardItem.date.desc()).all()
     # json_items = jsonify(items)
 
     return render_template('index.html', items=items)
@@ -56,6 +59,7 @@ def index():
 @app.route('/json')
 def post_json():
     items = ClipboardItem.query.all()
+    # items = ClipboardItem.query.order_by(ClipboardItem.date.desc()).all()
     return jsonify(items)
 
 
