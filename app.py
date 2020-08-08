@@ -48,8 +48,8 @@ def listen(text):
 
 @app.route('/')
 def index():
-    items = ClipboardItem.query.all()
-    # items = ClipboardItem.query.order_by(ClipboardItem.date.desc()).all()
+    # items = ClipboardItem.query.all()
+    items = ClipboardItem.query.order_by(ClipboardItem.date.desc()).all()
     # json_items = jsonify(items)
 
     return render_template('index.html', items=items)
@@ -58,8 +58,8 @@ def index():
 
 @app.route('/json')
 def post_json():
-    items = ClipboardItem.query.all()
-    # items = ClipboardItem.query.order_by(ClipboardItem.date.desc()).all()
+    # items = ClipboardItem.query.all()
+    items = ClipboardItem.query.order_by(ClipboardItem.date.desc()).all()
     return jsonify(items)
 
 
